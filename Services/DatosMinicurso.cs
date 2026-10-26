@@ -39,13 +39,13 @@ public static class DatosMinicurso
     [
         new(1, "Idea intuitiva del sólido de revolución",
             "Cómo una región plana genera un cuerpo en el espacio al girar alrededor de un eje.",
-            "https://www.youtube.com/embed/VIDEO_ID_1"),
+            "https://youtu.be/K70CPaN36rM"),
         new(2, "Método de los discos y arandelas",
             "Fórmulas, elección del radio y planteamiento de la integral en un minuto.",
-            "https://www.youtube.com/embed/VIDEO_ID_2"),
+            "https://youtu.be/N8ZW19QQ-jo"),
         new(3, "Método de los cascarones cilíndricos",
             "Cuándo conviene usarlo y cómo se construye el diferencial de volumen.",
-            "https://www.youtube.com/embed/VIDEO_ID_3")
+            "https://youtu.be/YUW2Qi1FXmc")
     ];
 
     // ----------------------------------------------------------------------

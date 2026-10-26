@@ -2,6 +2,7 @@
 @page "/caratula"
 @inject CursoEstado Estado
 @using MinicursoCalculoII.Services
+@using System
 
 <PageTitle>Carátula · Minicurso de Cálculo II — UMG</PageTitle>
 
@@ -149,7 +150,19 @@
 </div>
 
 @code {
-    private bool _guardado;
+    private bool _guardado = true;
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrWhiteSpace(Estado.Estudiante.Nombre))
+        {
+            Estado.Estudiante.Nombre = "Luis Angel Rogel Gutiérrez";
+            Estado.Estudiante.Carnet = "9941-25-28290";
+            Estado.Estudiante.Carrera = "Ingeniería en Sistemas";
+            Estado.Estudiante.Ciclo = "2026 / Sección B";
+            Estado.Estudiante.Fecha = DateTime.Today;
+        }
+    }
 
     private void MarcarCompletado() => _guardado = true;
 }
