@@ -36,8 +36,20 @@ dotnet publish -c Release -o publish
 En VS Code también puede usar:
 
 - **`Ctrl + Shift + B`** → tarea *build*
-- **F5** → *Lanzar MinicursoCalculoII (Blazor WASM)*
-- Paleta de comandos → *Tasks: Run Task* → **watch** (recompilación automática)
+- **F5** → *Lanzar MinicursoCalculoII (Blazor WASM)* (usa la tarea `serve` y abre `http://localhost:5101`)
+- Paleta de comandos → *Tasks: Run Task* → **run-local** o **watch** (recompilación automática)
+
+### Si el puerto 5101 está ocupado
+
+`dotnet run` falla con `Failed to bind to address http://127.0.0.1:5101: address already in use`
+cuando quedó vivo un devserver de una ejecución anterior. Use:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run-local.ps1
+```
+
+El script cierra únicamente los devservers viejos de **este** proyecto. Si el puerto lo ocupa
+otro programa, arranca en el siguiente puerto libre e indica la URL en la terminal.
 
 ---
 
@@ -211,7 +223,27 @@ El anillo de avance de la barra lateral se dibuja a partir del porcentaje calcul
 
 ---
 
-## 7. Licencia y uso
+## 7. Despliegue en GitHub Pages
+
+El sitio se publica automáticamente en cada push a `main` mediante
+`.github/workflows/deploy-pages.yml`:
+
+<https://lrogelg-hue.github.io/Proyecto_minicurso_calculoII/>
+
+- El `base href` de `wwwroot/index.html` es `/` para que funcione en localhost.
+  El workflow lo reescribe a `/Proyecto_minicurso_calculoII/` al publicar, así que
+  **no hay que cambiarlo a mano para desplegar**.
+- Cada build publicado incluye `<meta name="commit" content="...">`. Para comprobar qué
+  versión está activa: clic derecho en la página → *Ver código fuente* y busque `commit`.
+- Si el sitio no cambia después de un push, revise la pestaña **Actions**: el run debe
+  terminar en verde y el job `deploy` no debe aparecer como *cancelled*. Re-ejecutar un
+  run antiguo vuelve a publicar el commit anterior, no el último.
+- El `404.html` que se publica se genera en el workflow a partir del `index.html` ya
+  corregido (fallback para rutas de Blazor).
+
+---
+
+## 8. Licencia y uso
 
 Material elaborado con fines **académicos y didácticos** para el curso de Cálculo II de la
 Universidad Mariano Gálvez de Guatemala. Las bibliotecas de terceros (Bootstrap, MathJax)

@@ -5,10 +5,10 @@
             "name": "Lanzar MinicursoCalculoII (Blazor WASM)",
             "type": "blazorwasm",
             "request": "launch",
-            "url": "https://localhost:7001",
+            "url": "http://localhost:5101",
             "webRoot": "${workspaceFolder}/wwwroot",
             "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-            "preLaunchTask": "build"
+            "preLaunchTask": "serve"
         }
     ]
 }

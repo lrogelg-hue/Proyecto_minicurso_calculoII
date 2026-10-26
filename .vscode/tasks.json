@@ -18,6 +18,47 @@
             }
         },
         {
+            "label": "run-local",
+            "detail": "Arranca la app liberando el puerto 5101 si está ocupado.",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/scripts/run-local.ps1"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "serve",
+            "detail": "Servidor en segundo plano para depurar con F5.",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/scripts/run-local.ps1",
+                "-NoBrowser"
+            ],
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "blazor-serve",
+                "pattern": {
+                    "regexp": "^(.*)$",
+                    "message": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Iniciando en",
+                    "endsPattern": "Now listening on|Usando el puerto alternativo"
+                }
+            }
+        },
+        {
             "label": "watch",
             "command": "dotnet",
             "type": "process",

@@ -12,7 +12,9 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  # Un deploy de Pages no debe cancelarse a medias: si se interrumpe,
+  # el sitio se queda con la versión anterior aunque el push sea correcto.
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -31,6 +33,19 @@ jobs:
 
       - name: Add .nojekyll
         run: touch publish/wwwroot/.nojekyll
+
+      # El sitio vive en https://usuario.github.io/Proyecto_minicurso_calculoII/.
+      # En local se sirve desde "/", por eso el base href se fija aquí y no
+      # depende de lo que esté commiteado en wwwroot/index.html.
+      - name: Configurar base href para GitHub Pages
+        run: |
+          sed -i -E 's|<base href="[^"]*" />|<base href="/Proyecto_minicurso_calculoII/" />|' publish/wwwroot/index.html
+
+      # Sello de versión: permite comprobar con "Ver código fuente" qué commit
+      # está realmente publicado (y distinguirlo de la caché del navegador).
+      - name: Añadir sello de versión
+        run: |
+          sed -i "s|</head>|<meta name=\"commit\" content=\"${GITHUB_SHA}\" />\n</head>|" publish/wwwroot/index.html
 
       - name: Add 404.html for SPA fallback
         run: cp publish/wwwroot/index.html publish/wwwroot/404.html
