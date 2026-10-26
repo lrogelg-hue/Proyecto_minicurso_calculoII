@@ -1,0 +1,23 @@
+@*
+    Componente que encapsula una expresión LaTeX y solicita a MathJax
+    su renderizado después de cada actualización del DOM.
+*@
+@inject MathJaxInterop MathJax
+
+<span @ref="_elemento" class="@CssClass">@((MarkupString)Contenido)</span>
+
+@code {
+    /// <summary>Texto con sintaxis LaTeX, por ejemplo: \( \int_0^1 x^2\,dx \).</summary>
+    [Parameter, EditorRequired] public string Contenido { get; set; } = string.Empty;
+
+    /// <summary>Clase CSS opcional aplicada al contenedor.</summary>
+    [Parameter] public string? CssClass { get; set; }
+
+    private ElementReference _elemento;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Cada vez que el contenido se (re)dibuja, se pide a MathJax procesarlo.
+        await MathJax.TypesetAsync(_elemento);
+    }
+}

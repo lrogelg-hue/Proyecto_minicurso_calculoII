@@ -1,0 +1,189 @@
+/* ================================================================
+   Menú lateral de secciones y bloque de avance.
+   NavLink es un componente hijo, por lo que sus elementos se
+   alcanzan con ::deep.
+   ================================================================ */
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 100%;
+    padding: 1.1rem 0 1.25rem;
+}
+
+.nav__cabecera {
+    padding: 0 1.15rem 1.1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Lista de secciones ---------- */
+.nav__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1 1 auto;
+    padding: 1rem 0.85rem 1.25rem;
+}
+
+.nav ::deep .nav__enlace {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.62rem 0.7rem 0.62rem 0.85rem;
+    border-radius: var(--r-md);
+    color: #c3cbe0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.3;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Indicador vertical de la sección activa */
+.nav ::deep .nav__enlace::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 0;
+    border-radius: var(--r-pill);
+    background-color: var(--accent);
+    transform: translateY(-50%);
+    transition: height 0.2s ease;
+}
+
+.nav ::deep .nav__enlace:hover {
+    background-color: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+}
+
+.nav ::deep .nav__enlace.active {
+    background-color: rgba(41, 196, 216, 0.13);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.nav ::deep .nav__enlace.active::before {
+    height: 58%;
+}
+
+.nav ::deep .nav__enlace:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.nav ::deep .nav__icono {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: var(--r-sm);
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #8ea0c6;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.nav ::deep .nav__enlace:hover .nav__icono {
+    color: #d7deee;
+}
+
+.nav ::deep .nav__enlace.active .nav__icono {
+    background-color: rgba(41, 196, 216, 0.18);
+    color: #64dbe8;
+}
+
+.nav ::deep .nav__titulo {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.nav ::deep .nav__letra {
+    flex: 0 0 auto;
+    font-family: var(--fuente-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #6f7fa4;
+    padding: 0.05rem 0.32rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--r-xs);
+}
+
+.nav ::deep .nav__enlace.active .nav__letra {
+    color: #8fe3ee;
+    border-color: rgba(41, 196, 216, 0.4);
+}
+
+/* ---------- Bloque de avance ---------- */
+.nav__progreso {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin: 0 0.85rem;
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(41, 196, 216, 0.28);
+    border-radius: var(--r-md);
+    background-image: linear-gradient(150deg, rgba(41, 196, 216, 0.14), rgba(42, 33, 88, 0.32));
+}
+
+.anillo {
+    position: relative;
+    flex: 0 0 auto;
+    width: 3.6rem;
+    height: 3.6rem;
+}
+
+.anillo svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.anillo__pista {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.16);
+    stroke-width: 6;
+}
+
+.anillo__valor {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.anillo__cifra {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #eaf7f9;
+}
+
+.nav__progreso-texto {
+    min-width: 0;
+}
+
+.nav__progreso-titulo {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #9fb0d4;
+}
+
+.nav__progreso-detalle {
+    margin: 0.15rem 0 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.35;
+}

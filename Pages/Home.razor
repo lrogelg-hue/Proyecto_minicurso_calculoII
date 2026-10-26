@@ -1,0 +1,155 @@
+﻿@page "/"
+@page "/caratula"
+@inject CursoEstado Estado
+@using MinicursoCalculoII.Services
+
+<PageTitle>Carátula · Minicurso de Cálculo II — UMG</PageTitle>
+
+@* ---------- Portada ---------- *@
+<section class="hero">
+    <div class="hero__interior">
+        <div class="hero__texto">
+            <p class="hero__institucion">@DatosMinicurso.Institucion · @DatosMinicurso.Facultad</p>
+            <p class="hero__etiqueta">Minicurso de @DatosMinicurso.Curso</p>
+            <h1 class="hero__titulo">@DatosMinicurso.Titulo</h1>
+            <p class="hero__subtitulo">@DatosMinicurso.Subtitulo: del método de los discos al de los cascarones cilíndricos.</p>
+
+            <dl class="hero__datos">
+                <div class="hero__dato">
+                    <dt>Curso</dt>
+                    <dd>@DatosMinicurso.Curso</dd>
+                </div>
+                <div class="hero__dato">
+                    <dt>Ciclo académico</dt>
+                    <dd>@DatosMinicurso.Ciclo</dd>
+                </div>
+                <div class="hero__dato">
+                    <dt>Secciones</dt>
+                    <dd>De la A a la G</dd>
+                </div>
+            </dl>
+        </div>
+
+        <figure class="hero__arte">
+            <SolidIllustration />
+            <figcaption class="hero__arte-pie">
+                <MathFormula Contenido="\( y=x^{2} \)" /> girada alrededor del eje <MathFormula Contenido="\( y \)" />
+            </figcaption>
+        </figure>
+    </div>
+</section>
+
+@* ---------- Datos del estudiante ---------- *@
+<div class="panel mt-4">
+    <h2 class="subtitulo-bloque">Datos del estudiante</h2>
+
+    <EditForm Model="Estado.Estudiante" OnValidSubmit="MarcarCompletado">
+        <DataAnnotationsValidator />
+
+        <div class="datos-estudiante">
+            <div class="row g-3">
+                <div class="col-12 col-md-8">
+                    <label class="form-label" for="nombre">Nombre completo</label>
+                    <InputText id="nombre" class="form-control" @bind-Value="Estado.Estudiante.Nombre"
+                               placeholder="Nombre y apellidos" />
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label" for="carnet">Carné</label>
+                    <InputText id="carnet" class="form-control" @bind-Value="Estado.Estudiante.Carnet"
+                               placeholder="0900-00-00000" />
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="carrera">Carrera</label>
+                    <InputText id="carrera" class="form-control" @bind-Value="Estado.Estudiante.Carrera"
+                               placeholder="Ingeniería en Sistemas" />
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label" for="ciclo">Ciclo y sección</label>
+                    <InputText id="ciclo" class="form-control" @bind-Value="Estado.Estudiante.Ciclo"
+                               placeholder="2026 / A" />
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label" for="fecha">Fecha de entrega</label>
+                    <InputDate id="fecha" class="form-control" @bind-Value="Estado.Estudiante.Fecha" />
+                </div>
+            </div>
+        </div>
+
+        <div class="acciones-ejercicio">
+            <button type="submit" class="btn btn-primary">Guardar datos de la carátula</button>
+            <a class="btn btn-outline-primary" href="introduccion">Ver la introducción y los objetivos</a>
+            @if (_guardado)
+            {
+                <span class="pill pill--acento align-self-center">Datos guardados</span>
+            }
+        </div>
+    </EditForm>
+</div>
+
+@* ---------- Resumen de la carátula ---------- *@
+@if (Estado.Estudiante.EstaCompleto)
+{
+    <div class="panel panel--nota">
+        <h2 class="subtitulo-bloque">Resumen de la carátula</h2>
+
+        <dl class="resumen">
+            <div class="resumen__fila">
+                <dt class="resumen__clave">Estudiante</dt>
+                <dd class="resumen__valor">@Estado.Estudiante.Nombre</dd>
+            </div>
+            <div class="resumen__fila">
+                <dt class="resumen__clave">Carné</dt>
+                <dd class="resumen__valor">@Estado.Estudiante.Carnet</dd>
+            </div>
+            <div class="resumen__fila">
+                <dt class="resumen__clave">Carrera</dt>
+                <dd class="resumen__valor">@(string.IsNullOrWhiteSpace(Estado.Estudiante.Carrera) ? "No indicada" : Estado.Estudiante.Carrera)</dd>
+            </div>
+            <div class="resumen__fila">
+                <dt class="resumen__clave">Curso</dt>
+                <dd class="resumen__valor">@DatosMinicurso.Curso · @DatosMinicurso.Institucion</dd>
+            </div>
+            <div class="resumen__fila">
+                <dt class="resumen__clave">Tema</dt>
+                <dd class="resumen__valor">@DatosMinicurso.Titulo</dd>
+            </div>
+            <div class="resumen__fila">
+                <dt class="resumen__clave">Fecha</dt>
+                <dd class="resumen__valor">@Estado.Estudiante.FechaFormateada</dd>
+            </div>
+        </dl>
+    </div>
+}
+
+<SectionTitle Numero="A" Titulo="Presentación del minicurso"
+              Subtitulo="Carátula institucional con los datos de identificación del trabajo." />
+
+<div class="row g-3">
+    <div class="col-12 col-md-4">
+        <div class="ficha">
+            <p class="ficha__etiqueta">Institución</p>
+            <p class="ficha__titulo">@DatosMinicurso.Institucion</p>
+            <p class="texto-tenue">Facultad de Ingeniería en Sistemas de Información.</p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="ficha">
+            <p class="ficha__etiqueta">Curso</p>
+            <p class="ficha__titulo">@DatosMinicurso.Curso</p>
+            <p class="texto-tenue">@DatosMinicurso.Ciclo</p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="ficha">
+            <p class="ficha__etiqueta">Tema específico</p>
+            <p class="ficha__titulo">@DatosMinicurso.Titulo</p>
+            <p class="texto-tenue">Volúmenes y áreas de superficies de revolución.</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool _guardado;
+
+    private void MarcarCompletado() => _guardado = true;
+}

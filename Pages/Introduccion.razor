@@ -1,0 +1,49 @@
+@page "/introduccion"
+@using MinicursoCalculoII.Services
+
+<PageTitle>Introducción y objetivos · Minicurso de Cálculo II</PageTitle>
+
+<SectionTitle Numero="B" Titulo="Introducción y objetivos"
+              Subtitulo="Por qué importa el tema y qué debe dominarse al terminar." />
+
+<h2 class="subtitulo-bloque">Por qué estudiar los sólidos de revolución</h2>
+
+<div class="panel">
+    <p>
+        Muchos objetos de la ingeniería se construyen haciendo girar una curva o una región plana
+        alrededor de un eje: ejes de transmisión, depósitos cilíndricos, lentes, boquillas de
+        turbinas y tanques de almacenamiento. Determinar su volumen y el área de su superficie
+        permite calcular capacidades, cantidades de material y costos de fabricación.
+    </p>
+
+    <p class="mb-0">
+        Desde el punto de vista matemático, estos problemas muestran una de las aplicaciones más
+        importantes de la integral definida: la suma infinita de elementos diferenciales. La idea
+        central consiste en aproximar el sólido mediante figuras sencillas —discos, arandelas o
+        cascarones— y luego pasar al límite:
+    </p>
+
+    <MathFormula CssClass="bandeja-mate mt-3 mb-0"
+                 Contenido="\[ V=\lim_{n\to\infty}\sum_{i=1}^{n} A(x_i)\,\Delta x=\int_{a}^{b}A(x)\,dx \]" />
+</div>
+
+<h2 class="subtitulo-bloque">Objetivos de aprendizaje</h2>
+
+<ol class="objetivos">
+    @foreach (var objetivo in DatosMinicurso.Objetivos)
+    {
+        <li class="objetivo">
+            <p>@objetivo.Descripcion</p>
+        </li>
+    }
+</ol>
+
+<div class="callout callout--info mt-4" role="note">
+    <span class="callout__icono" aria-hidden="true">◆</span>
+    <div>
+        <strong>Cómo aprovechar este recurso.</strong>
+        Revise los conceptos (sección C), observe los videos breves (sección D), estudie los
+        problemas resueltos (sección E) y resuelva los problemas propuestos (sección F), donde
+        el sistema verificará automáticamente sus respuestas.
+    </div>
+</div>

@@ -1,0 +1,127 @@
+/* ================================================================
+   Estilos base de la plantilla Blazor.
+   El diseño del minicurso está en minicurso.css (se carga después),
+   por lo que aquí solo viven los estilos de infraestructura:
+   estados de validación, errores y pantalla de carga.
+   ================================================================ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+h1:focus {
+    outline: none;
+}
+
+/* ---------- Validación de formularios ---------- */
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid var(--ok);
+}
+
+.invalid {
+    outline: 1px solid var(--danger);
+}
+
+.validation-message {
+    color: var(--danger);
+}
+
+/* ---------- Interfaz de error de Blazor ---------- */
+#blazor-error-ui {
+    color-scheme: light only;
+    background: var(--warn-claro);
+    border-top: 3px solid var(--warn);
+    bottom: 0;
+    box-shadow: 0 -8px 24px -12px rgba(16, 24, 40, 0.35);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.75rem 3rem 0.75rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 2000;
+    color: var(--warn);
+    font-size: 0.95rem;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.6rem;
+    font-size: 1.1rem;
+}
+
+.blazor-error-boundary {
+    background-color: var(--danger-claro);
+    border: 1px solid #F5C6C0;
+    border-radius: var(--r-md);
+    padding: 1.25rem 1.25rem 1.25rem 3.5rem;
+    color: var(--danger);
+    position: relative;
+}
+
+.blazor-error-boundary::before {
+    content: "⚠";
+    position: absolute;
+    left: 1.1rem;
+    top: 1.05rem;
+    font-size: 1.4rem;
+    line-height: 1;
+}
+
+.blazor-error-boundary::after {
+    content: "Se produjo un error inesperado al mostrar esta sección.";
+    display: block;
+    margin-top: 0.35rem;
+}
+
+/* ---------- Pantalla de carga (antes de iniciar WebAssembly) ---------- */
+.loading-progress {
+    position: absolute;
+    display: block;
+    width: 7rem;
+    height: 7rem;
+    inset: 28vh 0 auto 0;
+    margin: 0 auto;
+}
+
+.loading-progress circle {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 0.55rem;
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+}
+
+.loading-progress circle:last-child {
+    stroke: var(--accent);
+    stroke-linecap: round;
+    stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+    transition: stroke-dasharray 0.15s ease-in-out;
+}
+
+.loading-progress-text {
+    position: absolute;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
+    color: var(--ink-2);
+    inset: calc(28vh + 7.9rem) 0 auto 0;
+}
+
+.loading-progress-text::after {
+    content: "Cargando el minicurso " var(--blazor-load-percentage, "");
+}
+
+code {
+    color: var(--accent-ink);
+}
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--ink-3);
+}

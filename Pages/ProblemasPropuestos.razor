@@ -1,0 +1,121 @@
+@page "/problemas-propuestos"
+@implements IDisposable
+@using MinicursoCalculoII.Models
+@using MinicursoCalculoII.Services
+
+<PageTitle>Problemas propuestos · Minicurso de Cálculo II</PageTitle>
+
+<SectionTitle Numero="F" Titulo="Problemas propuestos"
+              Subtitulo="Seis ejercicios organizados por dificultad, con verificación automática y solución guiada." />
+
+<p class="texto-tenue">
+    Escriba su respuesta y presione <strong>Verificar respuesta</strong>: la lógica en C# compara
+    su resultado con el correcto, admitiendo tolerancia numérica o formas simbólicas equivalentes.
+    Si lo necesita, despliegue la solución paso a paso y compárela con su procedimiento.
+</p>
+
+@* ---------- Panel de avance ---------- *@
+<div class="avance" role="status">
+    <div>
+        <p class="avance__cifra">
+            @Estado.EjerciciosResueltos<small> de @Estado.TotalEjercicios</small>
+        </p>
+        <p class="avance__leyenda">ejercicios resueltos correctamente</p>
+    </div>
+
+    <div class="avance__barra"
+         role="progressbar"
+         aria-label="Avance en los problemas propuestos"
+         aria-valuenow="@PorcentajeTexto"
+         aria-valuemin="0"
+         aria-valuemax="100">
+        <div class="avance__relleno"
+             style="width: @(PorcentajeTexto)%"></div>
+    </div>
+
+    <div>
+        <p class="avance__leyenda">
+            @Estado.PorcentajeAvance.ToString("0.#")% completado ·
+            @Estado.EjerciciosIntentados intento(s) registrado(s)
+        </p>
+        <button class="btn btn-outline-danger btn-sm mt-2" @onclick="Reiniciar">Reiniciar el progreso</button>
+    </div>
+</div>
+
+@* ---------- Filtro por dificultad ---------- *@
+<h2 class="subtitulo-bloque">Ejercicios por dificultad</h2>
+
+<div class="filtros" role="group" aria-label="Filtrar los ejercicios por dificultad">
+    @foreach (var opcion in Filtros)
+    {
+        <button type="button"
+                class="filtro"
+                aria-pressed="@(FiltroActual == opcion ? "true" : "false")"
+                @onclick="() => Filtrar(opcion)">
+            @opcion
+            <span class="filtro__cuenta">@ContarPorFiltro(opcion)</span>
+        </button>
+    }
+</div>
+
+<div class="mt-4">
+    @foreach (var ejercicio in EjerciciosFiltrados)
+    {
+        <ExerciseCard Ejercicio="ejercicio" />
+    }
+
+    @if (!EjerciciosFiltrados.Any())
+    {
+        <div class="callout callout--neutral" role="status">
+            <span class="callout__icono" aria-hidden="true">◆</span>
+            <p class="mb-0">No hay ejercicios en esta categoría.</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Inject] public CursoEstado Estado { get; set; } = default!;
+
+    private readonly IReadOnlyList<string> Filtros = ["Todos", "Básico", "Intermedio", "Avanzado"];
+    private string _filtroActual = "Todos";
+
+    private string FiltroActual => _filtroActual;
+
+    /// <summary>Porcentaje sin separador de miles y con punto decimal (válido en CSS y ARIA).</summary>
+    private string PorcentajeTexto =>
+        Estado.PorcentajeAvance.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+
+    private IEnumerable<Ejercicio> EjerciciosFiltrados =>
+        _filtroActual == "Todos"
+            ? DatosMinicurso.Ejercicios
+            : DatosMinicurso.Ejercicios.Where(e => TextoDificultad(e.Dificultad) == _filtroActual);
+
+    protected override void OnInitialized()
+    {
+        // La página se redibuja cuando cambia el progreso registrado en el servicio.
+        Estado.OnCambio += Refrescar;
+    }
+
+    private void Refrescar() => InvokeAsync(StateHasChanged);
+
+    private void Filtrar(string opcion) => _filtroActual = opcion;
+
+    private static string TextoDificultad(Dificultad dificultad) => dificultad switch
+    {
+        Dificultad.Basico => "Básico",
+        Dificultad.Intermedio => "Intermedio",
+        Dificultad.Avanzado => "Avanzado",
+        _ => "Todos"
+    };
+
+    private int ContarPorFiltro(string opcion) => opcion == "Todos"
+        ? DatosMinicurso.Ejercicios.Count
+        : DatosMinicurso.Ejercicios.Count(e => TextoDificultad(e.Dificultad) == opcion);
+
+    private void Reiniciar() => Estado.Reiniciar();
+
+    public void Dispose()
+    {
+        Estado.OnCambio -= Refrescar;
+    }
+}

@@ -1,0 +1,88 @@
+@*
+    Ilustración del sólido de revolución que da nombre al minicurso:
+    la parábola y = x² girada alrededor del eje y, dibujada como
+    alambre (contorno + anillos de giro).
+    Las posiciones y radios se calculan en C# a partir del perfil
+    r(t) = R·√t, que corresponde exactamente a la parábola y = x².
+*@
+
+<svg class="solido" viewBox="0 0 240 250" role="img" aria-labelledby="solido-titulo">
+    <title id="solido-titulo">
+        Superficie de revolución generada por la parábola y = x² al girar alrededor del eje y
+    </title>
+
+    @* Eje de revolución *@
+    <line class="solido__eje" x1="120" y1="36" x2="120" y2="206" />
+    <path class="solido__eje" d="M120 30l-5 10h10z" />
+
+    @* Anillos de giro *@
+    @foreach (var anillo in _anillos)
+    {
+        <ellipse class="solido__anillo"
+                 cx="120"
+                 cy="@N(anillo.Y)"
+                 rx="@N(anillo.Radio)"
+                 ry="@N(anillo.Radio * Perspectiva)"
+                 style="opacity: @N(anillo.Opacidad)" />
+    }
+
+    @* Contorno del perfil (la propia parábola) *@
+    <path class="solido__contorno" d="@_contornoDerecho" />
+    <path class="solido__contorno" d="@_contornoIzquierdo" />
+
+    @* Borde inferior, el más definido *@
+    <ellipse class="solido__borde"
+             cx="120"
+             cy="@N(YFondo)"
+             rx="@N(RadioMaximo)"
+             ry="@N(RadioMaximo * Perspectiva)" />
+</svg>
+
+@code {
+    /// <summary>Achatamiento de los anillos para simular la perspectiva.</summary>
+    private const double Perspectiva = 0.30;
+
+    private const int Anillos = 8;
+    private const double RadioMaximo = 66;
+    private const double YFondo = 190;
+
+    private static readonly System.Globalization.CultureInfo Invariante =
+        System.Globalization.CultureInfo.InvariantCulture;
+
+    private readonly List<(double Y, double Radio, double Opacidad)> _anillos = [];
+    private string _contornoDerecho = string.Empty;
+    private string _contornoIzquierdo = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        const double yTecho = 50;
+
+        for (var i = 1; i <= Anillos; i++)
+        {
+            var t = i / (double)Anillos;
+
+            // r(t) = R·√t reproduce el perfil de la parábola y = x²
+            var radio = RadioMaximo * Math.Sqrt(t);
+            var y = yTecho + t * (YFondo - yTecho);
+
+            _anillos.Add((y, radio, 0.55 - 0.3 * t));
+        }
+
+        _contornoDerecho = ConstruirContorno(1);
+        _contornoIzquierdo = ConstruirContorno(-1);
+    }
+
+    /// <summary>Une los extremos de los anillos con una polilínea (silueta).</summary>
+    private string ConstruirContorno(int sentido)
+    {
+        const double centro = 120;
+
+        var puntos = _anillos.Select(a =>
+            $"{(sentido > 0 ? centro + a.Radio : centro - a.Radio).ToString("0.##", Invariante)},{a.Y.ToString("0.##", Invariante)}");
+
+        return "M" + string.Join(" L", puntos);
+    }
+
+    /// <summary>Formatea sin decimales innecesarios y con punto decimal.</summary>
+    private static string N(double valor) => valor.ToString("0.##", Invariante);
+}

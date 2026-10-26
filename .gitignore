@@ -1,0 +1,21 @@
+## Archivos de compilación
+bin/
+obj/
+publish/
+
+## Visual Studio / VS Code
+.vs/
+*.user
+*.suo
+*.userosscache
+
+## Resultados de pruebas
+[Tt]est[Rr]esult*/
+*.trx
+
+## Sistema operativo
+.DS_Store
+Thumbs.db
+
+## Registros
+*.log

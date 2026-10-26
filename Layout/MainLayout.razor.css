@@ -1,0 +1,236 @@
+/* ================================================================
+   Armazón de la aplicación: barra lateral, barra superior,
+   contenido y pie. El resto del sistema vive en minicurso.css.
+   ================================================================ */
+
+.shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+}
+
+/* ---------- Barra lateral: en móvil es un panel desplegable ---------- */
+.shell__lateral {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    width: min(86vw, 19rem);
+    overflow-y: auto;
+    background-color: var(--nav-1);
+    background-image: linear-gradient(168deg, var(--nav-1) 0%, var(--nav-2) 62%, var(--nav-3) 100%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 30px 0 60px -40px rgba(6, 10, 20, 0.9);
+    transform: translateX(-102%);
+    transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.shell__lateral.esta-abierto {
+    transform: translateX(0);
+}
+
+/* Velo que oscurece el contenido tras el panel abierto */
+.shell__velo {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background-color: rgba(8, 12, 22, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.shell__velo.esta-abierto {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.shell__principal {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 100vh;
+}
+
+/* ---------- Barra superior ---------- */
+.barra {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.6rem 1rem;
+    background-color: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+}
+
+.barra__disparador {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-md);
+    background-color: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.barra__disparador:hover {
+    background-color: var(--surface-3);
+    border-color: var(--ink-3);
+}
+
+.barra__lineas {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 1.05rem;
+}
+
+.barra__lineas span {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background-color: currentColor;
+}
+
+.barra__marca {
+    min-width: 0;
+}
+
+.barra__seccion {
+    display: none;
+    margin: 0;
+    min-width: 0;
+}
+
+.barra__seccion-etiqueta {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--ink-3);
+}
+
+.barra__seccion-nombre {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.barra__avance {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin: 0 0 0 auto;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background-color: var(--surface-2);
+}
+
+.barra__avance-cifra {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--brand);
+}
+
+.barra__avance-cifra small {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-3);
+}
+
+.barra__avance-texto {
+    font-size: 0.74rem;
+    color: var(--ink-3);
+}
+
+/* ---------- Contenido ---------- */
+.contenido {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 2.5rem;
+}
+
+/* ---------- Pie ---------- */
+.pie {
+    border-top: 1px solid var(--line);
+    background-color: var(--surface);
+    padding: 1.4rem 1rem 1.75rem;
+    text-align: center;
+}
+
+.pie__linea {
+    margin: 0 0 0.2rem;
+    font-size: 0.82rem;
+    color: var(--ink-2);
+    max-width: none;
+}
+
+.pie__linea--tenue {
+    color: var(--ink-3);
+    font-size: 0.78rem;
+}
+
+/* ---------- Escritorio: barra lateral fija ---------- */
+@media (min-width: 992px) {
+    .shell {
+        grid-template-columns: 17.5rem minmax(0, 1fr);
+    }
+
+    .shell__lateral {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        height: 100vh;
+        width: auto;
+        transform: none;
+        transition: none;
+        box-shadow: 1px 0 0 rgba(16, 24, 40, 0.06);
+    }
+
+    .shell__velo {
+        display: none;
+    }
+
+    .barra {
+        padding: 0.65rem 1.75rem;
+    }
+
+    .barra__disparador,
+    .barra__marca {
+        display: none;
+    }
+
+    .barra__seccion {
+        display: block;
+    }
+
+    .contenido {
+        padding: 2rem 1.75rem 3.5rem;
+    }
+
+    .pie {
+        text-align: left;
+        padding: 1.4rem 1.75rem 1.75rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    .shell {
+        grid-template-columns: 18.5rem minmax(0, 1fr);
+    }
+}

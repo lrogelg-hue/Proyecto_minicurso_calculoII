@@ -1,0 +1,24 @@
+@*
+    Encabezado uniforme de las secciones obligatorias del minicurso.
+    La letra identifica la sección de la guía (A, B, C…), por lo que
+    funciona como índice y no como adorno.
+*@
+<header class="seccion">
+    <span class="seccion__marca" aria-hidden="true">@Numero</span>
+    <div>
+        <h2 class="seccion__titulo">@Titulo</h2>
+        @if (!string.IsNullOrWhiteSpace(Subtitulo))
+        {
+            <p class="seccion__ayuda">@Subtitulo</p>
+        }
+    </div>
+</header>
+
+@code {
+    /// <summary>Literal de la sección: A, B, C…</summary>
+    [Parameter, EditorRequired] public string Numero { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired] public string Titulo { get; set; } = string.Empty;
+
+    [Parameter] public string? Subtitulo { get; set; }
+}

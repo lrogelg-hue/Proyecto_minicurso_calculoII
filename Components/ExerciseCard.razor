@@ -1,0 +1,237 @@
+@*
+    Tarjeta interactiva de un ejercicio propuesto (sección F).
+    Toda la lógica de validación vive en C# (Models.Ejercicio y
+    Services.CursoEstado); el componente solo presenta el estado
+    y dispara las acciones.
+*@
+@inject CursoEstado Estado
+@inject MathJaxInterop MathJax
+
+<article id="ejercicio-@Ejercicio.Numero" class="ejercicio @ClaseEstado">
+
+    <header class="ejercicio__cabecera">
+        <h3 class="ejercicio__numero">Ejercicio @Ejercicio.Numero</h3>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="pill @ClaseDificultad">@TextoDificultad</span>
+            @if (Resultado?.Correcto == true)
+            {
+                <span class="pill pill--acento">Resuelto</span>
+            }
+        </div>
+    </header>
+
+    <div class="ejercicio__cuerpo">
+
+        <div class="enunciado" @ref="_contenedor">
+            <MathFormula Contenido="@Ejercicio.Enunciado" />
+        </div>
+
+        @* ---------- Opción múltiple ---------- *@
+        @if (Ejercicio.TipoRespuesta == TipoRespuesta.OpcionMultiple)
+        {
+            <fieldset class="ejercicio__opciones">
+                <legend class="ejercicio__opciones-leyenda">Seleccione la opción correcta</legend>
+
+                @for (var i = 0; i < (Ejercicio.Opciones?.Count ?? 0); i++)
+                {
+                    var letra = ((char)('A' + i)).ToString();
+                    var indice = i;
+
+                    <label class="opcion @(_respuesta == letra ? "opcion--elegida" : null)">
+                        <input class="opcion__radio"
+                               type="radio"
+                               name="ejercicio-@Ejercicio.Numero"
+                               value="@letra"
+                               checked="@(_respuesta == letra)"
+                               @onchange="@(() => _respuesta = letra)" />
+                        <span class="opcion__letra">@letra</span>
+                        <span class="opcion__contenido">
+                            <MathFormula Contenido="@Ejercicio.Opciones![indice]" />
+                        </span>
+                    </label>
+                }
+            </fieldset>
+
+            <div class="acciones-ejercicio">
+                <button class="btn btn-primary" @onclick="Verificar">Verificar respuesta</button>
+            </div>
+        }
+        else
+        {
+            @* ---------- Respuesta escrita ---------- *@
+            <div class="ejercicio__formulario">
+                <div>
+                    <label class="form-label" for="respuesta-@Ejercicio.Numero">@EtiquetaRespuesta</label>
+                    <div class="campo-respuesta">
+                        <span class="campo-respuesta__prefijo">V =</span>
+                        <input id="respuesta-@Ejercicio.Numero"
+                               type="text"
+                               inputmode="decimal"
+                               autocomplete="off"
+                               placeholder="@Placeholder"
+                               value="@_respuesta"
+                               @oninput="e => _respuesta = e.Value?.ToString() ?? string.Empty"
+                               @onkeyup="OnTeclaPresionada" />
+                    </div>
+                    <p class="form-text">@AyudaRespuesta</p>
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-primary" @onclick="Verificar">Verificar respuesta</button>
+                </div>
+            </div>
+        }
+
+        @* ---------- Retroalimentación ---------- *@
+        @if (Resultado is not null && !string.IsNullOrWhiteSpace(_respuesta))
+        {
+            <div class="callout @(Resultado.Correcto ? "callout--ok" : "callout--warn") mt-3" role="status">
+                <span class="callout__icono" aria-hidden="true">@(Resultado.Correcto ? "✓" : "→")</span>
+                <div>
+                    @if (Resultado.Correcto)
+                    {
+                        <p class="mb-0">
+                            <strong>Respuesta correcta.</strong>
+                            Acertaste en @Resultado.Intentos intento(s).
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="mb-0">
+                            <strong>La respuesta aún no es correcta.</strong>
+                            @Ejercicio.ObtenerRetroalimentacion(_respuesta)
+                        </p>
+                    }
+                </div>
+            </div>
+        }
+
+        @* ---------- Solución paso a paso ---------- *@
+        <div class="acciones-ejercicio">
+            <button class="btn btn-outline-secondary btn-sm"
+                    @onclick="RevelarSiguientePaso"
+                    disabled="@(!HayMasPasos)">
+                @(PasosVisibles == 0 ? "Ver la solución paso a paso" : "Ver el siguiente paso")
+            </button>
+
+            @if (PasosVisibles > 0 && PasosVisibles < Ejercicio.Solucion.Count)
+            {
+                <button class="btn btn-link btn-sm" @onclick="MostrarTodaLaSolucion">Mostrar todo</button>
+            }
+        </div>
+
+        @if (PasosVisibles > 0)
+        {
+            <div class="ejercicio__solucion" @ref="_solucion">
+                <p class="ejercicio__solucion-titulo">Desarrollo</p>
+
+                <ol class="pasos">
+                    @for (var i = 0; i < PasosVisibles; i++)
+                    {
+                        <li>
+                            <MathFormula Contenido="@Ejercicio.Solucion[i]" />
+                        </li>
+                    }
+                </ol>
+
+                @if (PasosVisibles >= Ejercicio.Solucion.Count)
+                {
+                    <div class="comprobacion">
+                        <span class="comprobacion__titulo">Comprobación</span>
+                        <MathFormula Contenido="@Ejercicio.Comprobacion" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</article>
+
+@code {
+    /// <summary>Ejercicio a presentar.</summary>
+    [Parameter, EditorRequired] public Ejercicio Ejercicio { get; set; } = default!;
+
+    private string _respuesta = string.Empty;
+    private int _pasosVisibles;
+    private ElementReference _contenedor;
+    private ElementReference _solucion;
+
+    private ResultadoEjercicio? Resultado => Estado.Obtener(Ejercicio.Numero);
+
+    private int PasosVisibles => _pasosVisibles;
+
+    private bool HayMasPasos => _pasosVisibles < Ejercicio.Solucion.Count;
+
+    private string TextoDificultad => Ejercicio.Dificultad switch
+    {
+        Dificultad.Basico => "Básico",
+        Dificultad.Intermedio => "Intermedio",
+        Dificultad.Avanzado => "Avanzado",
+        _ => "General"
+    };
+
+    private string Placeholder => Ejercicio.TipoRespuesta == TipoRespuesta.Numerica
+        ? "Ej. 113.10"
+        : "Ej. 48.6pi";
+
+    private string EtiquetaRespuesta => Ejercicio.TipoRespuesta == TipoRespuesta.Numerica
+        ? "Respuesta numérica"
+        : "Respuesta exacta en función de π";
+
+    private string AyudaRespuesta => Ejercicio.TipoRespuesta == TipoRespuesta.Numerica
+        ? "Use punto decimal. Se admite una tolerancia de ±" + Ejercicio.Tolerancia.ToString("0.##") + "."
+        : "Escriba π como «pi». Se aceptan expresiones como 243pi/5.";
+
+    private string ClaseDificultad => Ejercicio.Dificultad switch
+    {
+        Dificultad.Basico => "pill--basico",
+        Dificultad.Intermedio => "pill--intermedio",
+        Dificultad.Avanzado => "pill--avanzado",
+        _ => "pill--neutro"
+    };
+
+    private string ClaseEstado => Resultado switch
+    {
+        { Correcto: true } => "ejercicio--correcto",
+        { Correcto: false } => "ejercicio--revisar",
+        _ => string.Empty
+    };
+
+    private void Verificar() => Estado.Responder(Ejercicio, _respuesta);
+
+    /// <summary>Permite verificar la respuesta al presionar Enter.</summary>
+    private void OnTeclaPresionada(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            Verificar();
+        }
+    }
+
+    private void RevelarSiguientePaso()
+    {
+        if (_pasosVisibles == 0)
+        {
+            Estado.MostrarSolucion(Ejercicio.Numero);
+        }
+
+        if (HayMasPasos)
+        {
+            _pasosVisibles++;
+        }
+    }
+
+    private void MostrarTodaLaSolucion()
+    {
+        Estado.MostrarSolucion(Ejercicio.Numero);
+        _pasosVisibles = Ejercicio.Solucion.Count;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Al revelar pasos nuevos se debe tipografiar el LaTeX insertado.
+        if (!firstRender && _pasosVisibles > 0)
+        {
+            await MathJax.TypesetAsync(_solucion);
+        }
+    }
+}

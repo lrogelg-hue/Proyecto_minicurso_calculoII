@@ -1,0 +1,61 @@
+@page "/fuentes"
+@using MinicursoCalculoII.Services
+
+<PageTitle>Fuentes consultadas · Minicurso de Cálculo II</PageTitle>
+
+<SectionTitle Numero="G" Titulo="Fuentes consultadas"
+              Subtitulo="Bibliografía y créditos de los recursos utilizados." />
+
+<h2 class="subtitulo-bloque">Referencias bibliográficas</h2>
+
+<ol class="fuentes">
+    @foreach (var fuente in DatosMinicurso.Fuentes)
+    {
+        <li class="fuente">
+            <p class="fuente__referencia mb-0">
+                @fuente.Autores (@fuente.Anio). <em>@fuente.Titulo</em>. @fuente.Editorial.
+            </p>
+            <p class="fuente__meta mb-0">
+                <span class="pill pill--neutro">@fuente.Tipo</span>
+                <a class="fuente__url" href="@fuente.ReferenciaUrl" target="_blank" rel="noopener noreferrer">
+                    @fuente.ReferenciaUrl
+                </a>
+            </p>
+        </li>
+    }
+</ol>
+
+<h2 class="subtitulo-bloque">Créditos técnicos</h2>
+
+<div class="row g-3">
+    <div class="col-12 col-md-6">
+        <div class="ficha">
+            <p class="ficha__etiqueta">Desarrollo</p>
+            <p class="ficha__titulo">Aplicación web educativa</p>
+            <p class="texto-tenue mb-0">
+                Construida con <strong>C#</strong>, <strong>.NET</strong> y
+                <strong>Blazor WebAssembly</strong>, con una arquitectura modular y un diseño
+                responsivo.
+            </p>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="ficha">
+            <p class="ficha__etiqueta">Tipografía matemática</p>
+            <p class="ficha__titulo">MathJax 3</p>
+            <p class="texto-tenue mb-0">
+                Fórmulas compuestas con sintaxis LaTeX y renderizadas en el navegador; la
+                interfaz usa Bootstrap 5 para la rejilla y la adaptación a móviles.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="callout callout--neutral mt-4" role="note">
+    <span class="callout__icono" aria-hidden="true">◆</span>
+    <div>
+        <strong>Uso académico.</strong> Este material se elaboró con fines didácticos para el
+        curso de @DatosMinicurso.Curso de la @DatosMinicurso.Institucion. Las marcas y los
+        recursos citados pertenecen a sus respectivos autores.
+    </div>
+</div>

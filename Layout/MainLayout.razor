@@ -1,0 +1,132 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject CursoEstado Estado
+@inject NavigationManager Navegacion
+
+@* El layout controla el estado del menú lateral para poder ofrecer,
+   en pantallas pequeñas, un panel desplegable con velo de fondo. *@
+
+<a class="saltar-contenido" href="#contenido-principal">Ir al contenido</a>
+
+<div class="shell">
+    <aside id="navegacion-principal"
+           class="shell__lateral @(MenuAbierto ? "esta-abierto" : null)">
+        <NavMenu OnNavegar="CerrarMenu" />
+    </aside>
+
+    <div class="shell__velo @(MenuAbierto ? "esta-abierto" : null)"
+         @onclick="CerrarMenu"
+         aria-hidden="true"></div>
+
+    <div class="shell__principal">
+        <header class="barra">
+            <button type="button"
+                    class="barra__disparador"
+                    @onclick="AlternarMenu"
+                    aria-controls="navegacion-principal"
+                    aria-expanded="@(MenuAbierto ? "true" : "false")"
+                    aria-label="Abrir el menú de secciones">
+                <span class="barra__lineas" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                </span>
+            </button>
+
+            <div class="barra__marca">
+                <BrandMark Compacta="true" />
+            </div>
+
+            <p class="barra__seccion">
+                <span class="barra__seccion-etiqueta">Sección @LetraActual</span>
+                <span class="barra__seccion-nombre">@TituloActual</span>
+            </p>
+
+            <p class="barra__avance" title="Ejercicios resueltos del minicurso">
+                <span class="barra__avance-cifra">@Estado.EjerciciosResueltos<small>/@Estado.TotalEjercicios</small></span>
+                <span class="barra__avance-texto">ejercicios</span>
+            </p>
+        </header>
+
+        <main id="contenido-principal" class="contenido" tabindex="-1">
+            @Body
+        </main>
+
+        <footer class="pie">
+            <p class="pie__linea">
+                <strong>@DatosMinicurso.Curso</strong> · @DatosMinicurso.Titulo
+            </p>
+            <p class="pie__linea pie__linea--tenue">
+                @DatosMinicurso.Institucion · @DatosMinicurso.Facultad
+            </p>
+            <p class="pie__linea pie__linea--tenue">
+                Elaborado con C#, .NET y Blazor WebAssembly · Fórmulas tipografiadas con MathJax.
+            </p>
+        </footer>
+    </div>
+</div>
+
+@code {
+    private bool MenuAbierto { get; set; }
+
+    /// <summary>Ubicación actual, para rotular la sección en la barra superior.</summary>
+    private string RutaActual { get; set; } = string.Empty;
+
+    private static readonly (string Ruta, string Letra, string Titulo)[] Secciones =
+    [
+        ("", "A", "Carátula"),
+        ("introduccion", "B", "Introducción y objetivos"),
+        ("conceptos", "C", "Conceptos y propiedades"),
+        ("videos", "D", "Videos explicativos"),
+        ("problemas-resueltos", "E", "Problemas resueltos"),
+        ("problemas-propuestos", "F", "Problemas propuestos"),
+        ("fuentes", "G", "Fuentes consultadas")
+    ];
+
+    private (string Letra, string Titulo) SeccionActual
+    {
+        get
+        {
+            foreach (var seccion in Secciones)
+            {
+                if (seccion.Ruta == RutaActual)
+                {
+                    return (seccion.Letra, seccion.Titulo);
+                }
+            }
+
+            return ("A", "Carátula");
+        }
+    }
+
+    private string LetraActual => SeccionActual.Letra;
+
+    private string TituloActual => SeccionActual.Titulo;
+
+    protected override void OnInitialized()
+    {
+        Estado.OnCambio += Refrescar;
+        Navegacion.LocationChanged += OnUbicacionCambiada;
+        ActualizarRuta();
+    }
+
+    private void OnUbicacionCambiada(object? remitente, LocationChangedEventArgs args)
+    {
+        ActualizarRuta();
+        MenuAbierto = false;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void ActualizarRuta() =>
+        RutaActual = Navegacion.ToBaseRelativePath(Navegacion.Uri).Split('?')[0].TrimEnd('/');
+
+    private void AlternarMenu() => MenuAbierto = !MenuAbierto;
+
+    private void CerrarMenu() => MenuAbierto = false;
+
+    private void Refrescar() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        Estado.OnCambio -= Refrescar;
+        Navegacion.LocationChanged -= OnUbicacionCambiada;
+    }
+}

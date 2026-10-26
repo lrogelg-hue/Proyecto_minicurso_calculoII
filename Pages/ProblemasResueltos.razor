@@ -1,0 +1,46 @@
+@page "/problemas-resueltos"
+@using MinicursoCalculoII.Services
+
+<PageTitle>Problemas resueltos · Minicurso de Cálculo II</PageTitle>
+
+<SectionTitle Numero="E" Titulo="Problemas resueltos"
+              Subtitulo="Desarrollo paso a paso, con la justificación de cada decisión y la comprobación del resultado." />
+
+@foreach (var problema in DatosMinicurso.ProblemasResueltos)
+{
+    <article class="problema">
+        <header class="problema__cabecera">
+            <h3 class="problema__titulo">Problema @problema.Numero · @problema.Titulo</h3>
+            <span class="pill pill--neutro">@problema.DificultadTexto</span>
+        </header>
+
+        <div class="problema__cuerpo">
+            <div class="enunciado">
+                <strong>Enunciado.</strong>
+                <MathFormula Contenido="@problema.Enunciado" />
+            </div>
+
+            <h4 class="subtitulo-bloque">Desarrollo</h4>
+
+            <ol class="pasos">
+                @foreach (var paso in problema.Pasos)
+                {
+                    <li>
+                        <span class="pasos__justificacion">@paso.Justificacion</span>
+                        <MathFormula Contenido="@paso.Desarrollo" />
+                    </li>
+                }
+            </ol>
+
+            <div class="comprobacion">
+                <span class="comprobacion__titulo">Comprobación</span>
+                <MathFormula Contenido="@problema.Comprobacion" />
+            </div>
+        </div>
+    </article>
+}
+
+<div class="acciones-ejercicio">
+    <a class="btn btn-primary" href="problemas-propuestos">Continuar con los problemas propuestos</a>
+    <a class="btn btn-outline-secondary" href="conceptos">Repasar los conceptos</a>
+</div>

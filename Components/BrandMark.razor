@@ -1,0 +1,17 @@
+@*
+    Marca del minicurso: el signo de integral dentro de un disco.
+    El disco alude al elemento diferencial con el que se construyen
+    los sólidos de revolución (discos, arandelas y cascarones).
+*@
+<div class="marca @(Compacta ? "marca--compacta" : null)">
+    <span class="marca__disco" aria-hidden="true">∫</span>
+    <span class="marca__texto">
+        <span class="marca__curso">@DatosMinicurso.Curso</span>
+        <span class="marca__tema">@DatosMinicurso.Titulo</span>
+    </span>
+</div>
+
+@code {
+    /// <summary>Versión reducida, para la barra superior en pantallas pequeñas.</summary>
+    [Parameter] public bool Compacta { get; set; }
+}

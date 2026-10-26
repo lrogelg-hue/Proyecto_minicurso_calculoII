@@ -1,0 +1,137 @@
+@page "/conceptos"
+@using MinicursoCalculoII.Services
+
+<PageTitle>Conceptos y propiedades · Minicurso de Cálculo II</PageTitle>
+
+<SectionTitle Numero="C" Titulo="Conceptos, definiciones y propiedades"
+              Subtitulo="Marco teórico formal de los sólidos y superficies de revolución." />
+
+<h2 class="subtitulo-bloque">Definiciones fundamentales</h2>
+
+<dl class="definiciones">
+    <dt class="definiciones__termino">Sólido de revolución</dt>
+    <dd class="definiciones__detalle">
+        Cuerpo tridimensional generado al hacer girar una región plana \( R \) alrededor de una
+        recta fija llamada <em>eje de revolución</em>. Si \( R \) está limitada por \( y=f(x) \),
+        el eje \( x \) y las rectas \( x=a \), \( x=b \), el eje de giro es el eje \( x \).
+    </dd>
+
+    <dt class="definiciones__termino">Disco</dt>
+    <dd class="definiciones__detalle">
+        Corte perpendicular al eje de giro cuando la región toca el eje. Es un círculo de radio
+        \( R(x)=f(x) \) y área \( A(x)=\pi\left[f(x)\right]^{2} \).
+    </dd>
+
+    <dt class="definiciones__termino">Arandela</dt>
+    <dd class="definiciones__detalle">
+        Corte perpendicular al eje cuando la región no toca el eje de giro: es un anillo de radio
+        externo \( R(x) \), radio interno \( r(x) \) y área
+        \( A(x)=\pi\left(\left[R(x)\right]^{2}-\left[r(x)\right]^{2}\right) \).
+    </dd>
+
+    <dt class="definiciones__termino">Cascarón cilíndrico</dt>
+    <dd class="definiciones__detalle">
+        Corte paralelo al eje de giro, con radio \( p(x) \), altura \( h(x) \) y espesor
+        \( dx \); su volumen diferencial es \( dV=2\pi\,p(x)\,h(x)\,dx \).
+    </dd>
+</dl>
+
+<h2 class="subtitulo-bloque">Propiedades y fórmulas de volumen</h2>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <div class="formula">
+            <p class="formula__nombre">Método de los discos</p>
+            <p class="formula__cuando">La región toca el eje de giro.</p>
+            <MathFormula Contenido="\[ V=\pi\int_{a}^{b}\left[f(x)\right]^{2}dx \]" />
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="formula">
+            <p class="formula__nombre">Método de las arandelas</p>
+            <p class="formula__cuando">La región deja un hueco interior.</p>
+            <MathFormula Contenido="\[ V=\pi\int_{a}^{b}\left(\left[R(x)\right]^{2}-\left[r(x)\right]^{2}\right)dx \]" />
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="formula">
+            <p class="formula__nombre">Cascarones cilíndricos</p>
+            <p class="formula__cuando">Conviene integrar en paralelo al eje de giro.</p>
+            <MathFormula Contenido="\[ V=2\pi\int_{a}^{b}p(x)\,h(x)\,dx \]" />
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="formula">
+            <p class="formula__nombre">Área de una superficie</p>
+            <p class="formula__cuando">Con \( f' \) continua en \( [a,b] \).</p>
+            <MathFormula Contenido="\[ S=\int_{a}^{b}2\pi f(x)\sqrt{1+\left[f'(x)\right]^{2}}\,dx \]" />
+        </div>
+    </div>
+</div>
+
+<h2 class="subtitulo-bloque">Propiedades operativas</h2>
+
+<ol class="lista-propiedades">
+    <li>
+        <strong>Linealidad.</strong>
+        \(\displaystyle\int_{a}^{b}\left(\alpha f+\beta g\right)dx=\alpha\int_{a}^{b}f\,dx+\beta\int_{a}^{b}g\,dx\).
+    </li>
+    <li>
+        <strong>Aditividad del intervalo.</strong> Si \( a&lt;c&lt;b \), entonces
+        \( V(a,b)=V(a,c)+V(c,b) \), lo que permite dividir el sólido en partes.
+    </li>
+    <li>
+        <strong>Desplazamiento del eje.</strong> El volumen no cambia si el eje se desplaza
+        paralelamente sin alterar los radios; sí cambia cuando el eje se mueve respecto de la
+        región, porque los radios efectivos aumentan o disminuyen.
+    </li>
+    <li>
+        <strong>Simetría.</strong> Si la región es simétrica respecto al eje de giro, basta
+        integrar media región y multiplicar por dos.
+    </li>
+</ol>
+
+<h2 class="subtitulo-bloque">Qué método conviene usar</h2>
+
+<div class="tabla-envoltura">
+    <table class="tabla">
+        <caption>Elección del método según la región y el eje de giro.</caption>
+        <thead>
+            <tr>
+                <th scope="col">Situación</th>
+                <th scope="col">Método recomendado</th>
+                <th scope="col">Variable de integración</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>La región se define como \( y=f(x) \) y gira alrededor del eje \( x \).</td>
+                <td>Discos o arandelas</td>
+                <td>\( x \)</td>
+            </tr>
+            <tr>
+                <td>La región gira alrededor del eje \( y \) y \( y=f(x) \) es fácil de evaluar.</td>
+                <td>Cascarones cilíndricos</td>
+                <td>\( x \)</td>
+            </tr>
+            <tr>
+                <td>La región gira alrededor del eje \( y \) y conviene despejar \( x=g(y) \).</td>
+                <td>Discos o arandelas</td>
+                <td>\( y \)</td>
+            </tr>
+            <tr>
+                <td>El eje de giro es una recta \( y=k \) o \( x=k \) distinta de los ejes.</td>
+                <td>Discos o arandelas con radios desplazados</td>
+                <td>La más simple</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="callout callout--neutral mt-3" role="note">
+    <span class="callout__icono" aria-hidden="true">◆</span>
+    <div>
+        <strong>Regla práctica.</strong> Elija el método que produzca la integral más sencilla de
+        evaluar; ambos métodos, bien planteados, conducen al mismo volumen.
+    </div>
+</div>

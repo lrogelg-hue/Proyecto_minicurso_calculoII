@@ -1,0 +1,45 @@
+@page "/videos"
+@using MinicursoCalculoII.Services
+
+<PageTitle>Videos explicativos · Minicurso de Cálculo II</PageTitle>
+
+<SectionTitle Numero="D" Titulo="Videos explicativos"
+              Subtitulo="Tres cápsulas de un minuto con las ideas clave del tema." />
+
+<p class="texto-tenue">
+    Cada video resume un concepto esencial. Los contenedores mantienen la proporción 16:9 y se
+    adaptan al ancho disponible en computadoras y teléfonos.
+</p>
+
+<div class="row g-4">
+    @foreach (var video in DatosMinicurso.Videos)
+    {
+        <div class="col-12 col-lg-4">
+            <article class="video">
+                <div class="video__marco ratio ratio-16x9">
+                    <iframe src="@video.UrlEmbebido"
+                            title="@video.Titulo"
+                            loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                </div>
+                <div class="video__cuerpo">
+                    <span class="pill pill--acento">Video @video.Numero</span>
+                    <h3 class="video__titulo">@video.Titulo</h3>
+                    <p class="video__descripcion">@video.Descripcion</p>
+                </div>
+            </article>
+        </div>
+    }
+</div>
+
+<div class="callout callout--warn mt-4" role="note">
+    <span class="callout__icono" aria-hidden="true">!</span>
+    <div>
+        <strong>Nota para quien edita el contenido.</strong>
+        Los videos se cargan desde <code>DatosMinicurso.Videos</code>. Sustituya
+        <code>VIDEO_ID_1</code>, <code>VIDEO_ID_2</code> y <code>VIDEO_ID_3</code> por los
+        identificadores reales, o cambie la URL por un archivo <code>.mp4</code> guardado en
+        <code>wwwroot/videos/</code>.
+    </div>
+</div>

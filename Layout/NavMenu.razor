@@ -1,0 +1,112 @@
+﻿@implements IDisposable
+@inject CursoEstado Estado
+
+@* Menú de las secciones obligatorias del minicurso.
+   El indicador de progreso se calcula con C# y se dibuja como un
+   anillo, reforzando la idea de giro del tema. *@
+
+<div class="nav">
+    <div class="nav__cabecera">
+        <BrandMark />
+    </div>
+
+    <nav class="nav__lista" aria-label="Secciones del minicurso" @onclick="NotificarNavegacion">
+        @foreach (var enlace in Enlaces)
+        {
+            <NavLink class="nav__enlace"
+                     href="@enlace.Ruta"
+                     Match="@(enlace.Ruta.Length == 0 ? NavLinkMatch.All : NavLinkMatch.Prefix)">
+                <span class="nav__icono" aria-hidden="true">@((MarkupString)enlace.Icono)</span>
+                <span class="nav__titulo">@enlace.Titulo</span>
+                <span class="nav__letra" aria-hidden="true">@enlace.Letra</span>
+            </NavLink>
+        }
+    </nav>
+
+    <div class="nav__progreso" role="img" aria-label="@DescripcionProgreso">
+        <div class="anillo" aria-hidden="true">
+            <svg viewBox="0 0 72 72">
+                <circle class="anillo__pista" cx="36" cy="36" r="30" />
+                <circle class="anillo__valor" cx="36" cy="36" r="30"
+                        stroke-dasharray="@Circunferencia"
+                        stroke-dashoffset="@Desplazamiento" />
+            </svg>
+            <span class="anillo__cifra">@Estado.PorcentajeAvance.ToString("0")%</span>
+        </div>
+
+        <div class="nav__progreso-texto">
+            <p class="nav__progreso-titulo">Avance del minicurso</p>
+            <p class="nav__progreso-detalle">
+                @Estado.EjerciciosResueltos de @Estado.TotalEjercicios ejercicios resueltos
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    /// <summary>Se avisa al layout para cerrar el panel en pantallas pequeñas.</summary>
+    [Parameter] public EventCallback OnNavegar { get; set; }
+
+    private const double Radio = 30;
+
+    private static readonly System.Globalization.CultureInfo Invariante =
+        System.Globalization.CultureInfo.InvariantCulture;
+
+    private string Circunferencia => (2 * Math.PI * Radio).ToString("0.###", Invariante);
+
+    /// <summary>Desplazamiento del trazo del anillo según el porcentaje de avance.</summary>
+    private string Desplazamiento
+    {
+        get
+        {
+            var longitud = 2 * Math.PI * Radio;
+            var avance = Math.Clamp(Estado.PorcentajeAvance, 0, 100) / 100.0;
+            return (longitud * (1 - avance)).ToString("0.###", Invariante);
+        }
+    }
+
+    private string DescripcionProgreso =>
+        $"Avance del minicurso: {Estado.EjerciciosResueltos} de {Estado.TotalEjercicios} ejercicios resueltos.";
+
+    private void NotificarNavegacion()
+    {
+        if (OnNavegar.HasDelegate)
+        {
+            OnNavegar.InvokeAsync();
+        }
+    }
+
+    protected override void OnInitialized() => Estado.OnCambio += Refrescar;
+
+    private void Refrescar() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Estado.OnCambio -= Refrescar;
+
+    /// <summary>
+    /// Secciones obligatorias según la guía del minicurso, con un icono
+    /// de trazo limpio para cada una.
+    /// </summary>
+    private readonly (string Letra, string Titulo, string Ruta, string Icono)[] Enlaces =
+    [
+        ("A", "Carátula", "",
+            """<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 16.5h4"/></svg>"""),
+
+        ("B", "Introducción y objetivos", "introduccion",
+            """<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>"""),
+
+        ("C", "Conceptos y propiedades", "conceptos",
+            """<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5H6.5l6 7-6 7H18"/></svg>"""),
+
+        ("D", "Videos explicativos", "videos",
+            """<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8.6 5.4 3.4-5.4 3.4z" fill="currentColor" stroke="none"/></svg>"""),
+
+        ("E", "Problemas resueltos", "problemas-resueltos",
+            """<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6h9M11 12h9M11 18h6"/><path d="m3.6 6.2 1.3 1.3 2-2.4"/><path d="m3.6 12.2 1.3 1.3 2-2.4"/></svg>"""),
+
+        ("F", "Problemas propuestos", "problemas-propuestos",
+            """<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10.2-10.2-3.9-3.9L4 16z"/><path d="m14.4 5.9 3.9 3.9"/><path d="M4 20v-4"/></svg>"""),
+
+        ("G", "Fuentes consultadas", "fuentes",
+            """<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M6.5 15H18"/></svg>""")
+    ];
+}
